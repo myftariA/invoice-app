@@ -11,7 +11,7 @@ const Header = () => {
     };
 
     return (
-        <header className="top-0 left-0 w-full fixed bg-purple-700 dark:bg-gray-900 text-white dark:text-white p-4 flex justify-between items-center">
+        <div className="w-full flex items-center justify-between bg-purple-700 dark:bg-gray-900 text-white dark:text-white p-4">
             <h1 className="text-lg font-bold ">
                 <Link to='/' className='text-white hover:text-white'> A.M Invoicing </Link>
             </h1>
@@ -20,7 +20,7 @@ const Header = () => {
                 className="bg-transparent focus:outline-none border-none hover:border-none hover:scale-125 transition-all">
                 {darkMode ? <FiSun /> : <FiMoon />}
             </button>
-        </header>
+        </div>
     );
 };
 

@@ -1,8 +1,8 @@
 const Invoices = () => {
     return (
-        <>
-            <h1 >Welcome to the Invoices Page</h1>
-        </>
+        <div className="flex">
+            Welcome to Invoices page
+        </div>
     )
 }
 

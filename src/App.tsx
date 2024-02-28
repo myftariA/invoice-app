@@ -9,14 +9,18 @@ function App() {
 
   return (
     <Router>
-      <div className="flex">
-        <Sidebar />
-        <Routes>
-          <Route path="/articles" element={<Articles />} />
-          <Route path="/invoices" element={<Invoices />} />
-        </Routes>
-        <div className="flex flex-col w-full">
-          <Header />
+      <div className='absolute top-0 w-full h-full'>
+        <Header />
+        <div className='flex w-full ' style={{ height: 'calc(100% - 67.5px)' }}>
+          <Sidebar />
+          <div className='auto-align'>
+            <div className='pageContainer'>
+              <Routes>
+                <Route path="/articles" element={<Articles />} />
+                <Route path="/invoices" element={<Invoices />} />
+              </Routes>
+            </div>
+          </div>
         </div>
       </div>
     </Router>
