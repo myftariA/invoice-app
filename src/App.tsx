@@ -11,7 +11,7 @@ function App() {
     <Router>
       <div className='absolute top-0 w-full h-full'>
         <Header />
-        <div className='flex w-full ' style={{ height: 'calc(100% - 67.5px)' }}>
+        <div className='flex w-full ' style={{ height: 'calc(100% - 64px)' }}>
           <Sidebar />
           <div className='auto-align'>
             <div className='pageContainer'>
