@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
-const Header = () => {
+const Header: React.FC = () => {
     const [darkMode, setDarkMode] = useState(false);
 
     const toggleDarkMode = () => {

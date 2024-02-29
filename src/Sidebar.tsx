@@ -1,8 +1,9 @@
+import React from 'react';
 import { RiShoppingBasketLine } from 'react-icons/ri';
 import { TbFileInvoice } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 
-const Sidebar = () => {
+const Sidebar: React.FC = () => {
     return (
         <div className=" border-white top-16 w-52 bg-gray-200 dark:bg-gray-950 text-gray-800 dark:text-gray-200">
             <ul className="pt-3 flex flex-col cursor-pointer text-gray-700 dark:text-white">

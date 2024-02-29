@@ -13,8 +13,8 @@ function App() {
         <Header />
         <div className='flex w-full ' style={{ height: 'calc(100% - 64px)' }}>
           <Sidebar />
-          <div className='auto-align'>
-            <div className='pageContainer'>
+          <div className='auto-align dark:bg-gray-800 dark:text-white'>
+            <div className='pageContainer p-2'>
               <Routes>
                 <Route path="/articles" element={<Articles />} />
                 <Route path="/invoices" element={<Invoices />} />
