@@ -82,11 +82,10 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 1rem 2rem 1rem 2rem;
+  padding: 2rem;
   overflow-y: auto;
   overflow-x: auto;
-  margin: 0 .125rem .125rem .125rem;
-  border-radius: .25rem
+  background-color: #dddddd;
 }
 
 .input {
@@ -99,6 +98,8 @@ button:focus-visible {
 .pageContainer {
   width: 100%;
   height: 100%;
+  background-color: white;
+  border-radius: .25rem;
 }
 
 .sidebar-list {

@@ -43,8 +43,9 @@ module.exports = {
         '2': '2rem'
       },
       screens: {
-        'sm': '860px',
-        'base': '1000px',
+        'xs': '550px',
+        'sm': '720px',
+        'base': '960',
         'lg': '1200px',
         'xl': '1350px',
         '2xl': '1536px'
