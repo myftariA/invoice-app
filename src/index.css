@@ -112,3 +112,26 @@ button:focus-visible {
   color: #333;
   transition: all .125s;
 }
+
+.base-p {
+  padding: .25rem;
+}
+
+.base-mb {
+  margin-bottom: .5rem;
+}
+
+/* .small-cnt {
+  container-type: inline-size;
+}
+
+/* using container query to make the container rows shrink */
+/* @container(max-width: 250px) {
+  .small-cnt {
+    display: grid;
+  }
+} */
+
+.break-word {
+  word-break: break-word;
+}
