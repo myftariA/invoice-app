@@ -17,7 +17,7 @@ const Header: React.FC = () => {
             </h1>
             <button
                 onClick={toggleDarkMode}
-                title={darkMode ? 'Light Mode' : 'Dark Mode'}
+                title={darkMode ? 'Toogle Light Mode' : 'Toogle Dark Mode'}
                 className="bg-transparent focus:outline-none border-none hover:border-none hover:scale-125 transition-all">
                 {darkMode ? <FiSun /> : <FiMoon />}
             </button>
