@@ -41,10 +41,9 @@ const frameworks = [
     },
 ]
 
-export function Combobox(...props: any) {
+export function Combobox() {
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState("")
-
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
