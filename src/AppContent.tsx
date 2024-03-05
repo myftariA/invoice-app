@@ -1,7 +1,7 @@
 
 import Articles from './Articles';
 import Sidebar from './Sidebar';
-import { BrowserRouter as Router, Routes, Route, Navigate, redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './Header';
 import Invoices from './Invoices';
 import Login from './Login';
@@ -10,10 +10,6 @@ import { useUserContext } from './UserContext';
 
 const AppContent: React.FC = () => {
     const { user } = useUserContext();
-    if (!user) {
-        console.log('no user');
-        redirect('/login');
-    }
     return (
         <div className='absolute top-0 w-full h-full'>
             <Header />
