@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FiSun, FiMoon } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
     const [darkMode, setDarkMode] = useState(false);
@@ -12,9 +11,7 @@ const Header: React.FC = () => {
 
     return (
         <div className="h-16 border-b w-full flex items-center justify-between bg-purple-700 dark:bg-gray-950 text-white dark:text-white p-4">
-            <h1 className="text-lg font-bold">
-                <Link to='/' className='text-white hover:text-white'> A.M Invoicing </Link>
-            </h1>
+            <h1 className="text-lg font-bold cursor-default"> A.M Invoicing</h1>
             <button
                 onClick={toggleDarkMode}
                 title={darkMode ? 'Toogle Light Mode' : 'Toogle Dark Mode'}
