@@ -112,7 +112,7 @@ const Invoices: React.FC = () => {
                 <div className='flex items-center gap-[.5rem]'>
                     <Label htmlFor='invoiceNr' className='text-md  font-bold'>Invoice Number:</Label>
                     <div>
-                        ARM-<input id='invoiceNr' type='text' className='border-[1px] border-black rounded-md capitalize focus:outline-none' ref={invoiceNrRef} ></input>
+                        ARM-<input id='invoiceNr' type='text' className='dark:bg-slate-800/50 border-[1px] border-black rounded-md capitalize focus:outline-none' ref={invoiceNrRef} ></input>
                     </div>
                 </div>
             </div>
