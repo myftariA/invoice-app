@@ -114,14 +114,14 @@ const Invoices: React.FC = () => {
     }
     return (
         <div className="flex flex-col w-full">
-            <div className='grid sm:grid-cols-2 grid-cols-1 gap-1 w-full mb-6'>
-                <div className='flex items-center gap-[.5rem]'>
-                    <Label className='text-md font-bold w-[100px]'>Date:</Label>
+            <div className='flex xs:flex-row gap-2 flex-col w-[100%] mb-6'>
+                <div className='flex items-center gap-[.5rem] '>
+                    <Label className='text-md font-bold'>Date:</Label>
                     <Label>{(new Date().toDateString())}</Label>
                 </div>
-                <div className='flex items-center gap-[.5rem] max-w-[80%]'>
-                    <Label htmlFor='invoiceNr' className='text-md  font-bold w-[100px]'>Invoice Nr:</Label>
-                    <div className='flex border-[2px] border-black rounded-md dark:bg-slate-800 w-[70%]'>
+                <div className='flex items-center gap-[.5rem]'>
+                    <Label htmlFor='invoiceNr' className='text-md  font-bold '>Invoice Nr:</Label>
+                    <div className='flex border-[2px] border-black rounded-md dark:bg-slate-800 max-w-[180px]'>
                         ARM-<input id='invoiceNr' type='number' min={1} className='uppercase w-[100%] dark:bg-slate-800/50 border-0 border-black focus:outline-none' ref={invoiceNrRef} ></input>
                     </div>
                 </div>
@@ -256,7 +256,7 @@ const Invoices: React.FC = () => {
                         </ScrollArea>
                     </PopoverContent>
                 </Popover>
-                <Table className='mb-3'>
+                <Table className='mb-3 border-2'>
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[100px]">Code</TableHead>
@@ -269,7 +269,7 @@ const Invoices: React.FC = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {itemsList.length > 0 && itemsList.map((item, index) => (
+                        {itemsList.length > 0 ? itemsList.map((item, index) => (
                             <TableRow key={item.itemId}>
                                 <TableCell className="font-medium">{item.itemCode}</TableCell>
                                 <TableCell>{item.itemName}</TableCell>
@@ -293,11 +293,14 @@ const Invoices: React.FC = () => {
                                     }}></XIcon>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )) : (<TableRow>
+                            <TableCell colSpan={7} className='text-center'>
+                                No items selected
+                            </TableCell>
+                        </TableRow>)}
                     </TableBody>
                 </Table>
-                {itemsList.length === 0 && <div className='flex justify-center'>No items selected</div>}
-                <div id='totalInfo' className='w-full flex items-center justify-between border-none mt-10'>
+                <div id='totalInfo' className='w-full flex items-center justify-between border-none mt-6'>
                     <div className="grid gap-[.5rem] w-2/3">
                         <Label htmlFor="notes">Notes</Label>
                         <Textarea className='dark:bg-slate-800/50' placeholder="Write invoice notes here." id="notes" ref={notesRef} />
