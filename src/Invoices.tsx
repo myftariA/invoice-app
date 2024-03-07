@@ -76,12 +76,17 @@ const Invoices: React.FC = () => {
         setItemsList(newItems);
     };
     const generateInvoice = async function () {
-        if (!invoiceNrRef.current?.value) return toast.warning('Please enter an invoice number ', {
+        if (!invoiceNrRef.current?.value) return toast.warning('Please enter an invoice number', {
             cancel: {
                 label: 'Close'
             }
         });
-        if (!selectedCustomer) return toast.warning('You must select a customer before continuing', {
+        if (!selectedCustomer) return toast.warning('You must select a customer before generating', {
+            cancel: {
+                label: 'Close'
+            }
+        });
+        if (itemsList.length === 0) return toast.warning('You must insert invoice lines before generating', {
             cancel: {
                 label: 'Close'
             }
@@ -98,8 +103,14 @@ const Invoices: React.FC = () => {
             user: user?.username,
             invoiceLines: itemsList,
         }
-        const invoiceResp = await axios.post<InvoiceDTO>('/api/Invoices', invoiceDto);
-        console.log(invoiceResp);
+
+        toast.promise(axios.post<InvoiceDTO>('/api/Invoices', invoiceDto), {
+            loading: 'Generating invoice..',
+            success: () => {
+                return 'Invoice generated successfuly!'
+            },
+            error: 'An error occurred generating the invoice!'
+        });
 
     }
     return (
