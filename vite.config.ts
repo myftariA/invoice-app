@@ -17,6 +17,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
-    },
+    }
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://sad1.ivaelektronik.com:8081',
+        changeOrigin: true
+      }
+    }
+  }
 });
