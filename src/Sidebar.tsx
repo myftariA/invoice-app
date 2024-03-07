@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaUser } from 'react-icons/fa';
 import { RiShoppingBasketLine } from 'react-icons/ri';
 import { TbFileInvoice } from 'react-icons/tb';
 import { NavLink } from 'react-router-dom';
@@ -12,10 +13,15 @@ const Sidebar: React.FC = () => {
                     <TbFileInvoice className="text-lg" />
                     <li className='hidden text-[17px] sm:block'>Invoice</li>
                 </NavLink>
-                <NavLink to='/articles'
+                <NavLink to='/items'
                     className='sidebar-list dark:text-white dark:hover:text-blue-400 active:bg-red'>
                     <RiShoppingBasketLine className="text-lg" />
-                    <li className='hidden text-[17px] sm:block'>Articles</li>
+                    <li className='hidden text-[17px] sm:block'>Items</li>
+                </NavLink>
+                <NavLink to='/customers'
+                    className='sidebar-list dark:text-white dark:hover:text-blue-400 active:bg-red'>
+                    <FaUser className="text-lg" />
+                    <li className='hidden text-[17px] sm:block'>Customers</li>
                 </NavLink>
             </ul>
         </div >
