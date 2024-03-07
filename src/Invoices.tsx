@@ -6,7 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -115,15 +114,15 @@ const Invoices: React.FC = () => {
     }
     return (
         <div className="flex flex-col w-full">
-            <div className='flex items-end justify-start gap-2 mb-6'>
+            <div className='grid sm:grid-cols-2 grid-cols-1 gap-1 w-full mb-6'>
                 <div className='flex items-center gap-[.5rem]'>
-                    <Label className='text-md font-bold'>Date:</Label>
+                    <Label className='text-md font-bold w-[100px]'>Date:</Label>
                     <Label>{(new Date().toDateString())}</Label>
                 </div>
-                <div className='flex items-center gap-[.5rem]'>
-                    <Label htmlFor='invoiceNr' className='text-md  font-bold'>Invoice Number:</Label>
-                    <div className='border-[2px] border-black rounded-md dark:bg-slate-800'>
-                        ARM-<input id='invoiceNr' type='text' className='dark:bg-slate-800/50 border-0 border-black  capitalize focus:outline-none' ref={invoiceNrRef} ></input>
+                <div className='flex items-center gap-[.5rem] max-w-[80%]'>
+                    <Label htmlFor='invoiceNr' className='text-md  font-bold w-[100px]'>Invoice Nr:</Label>
+                    <div className='flex border-[2px] border-black rounded-md dark:bg-slate-800 w-[70%]'>
+                        ARM-<input id='invoiceNr' type='number' min={1} className='uppercase w-[100%] dark:bg-slate-800/50 border-0 border-black focus:outline-none' ref={invoiceNrRef} ></input>
                     </div>
                 </div>
             </div>
@@ -131,17 +130,17 @@ const Invoices: React.FC = () => {
                 <div>
                     <h2 className='base-mb font-bold text-lg'>From</h2>
                     <div id='billFrom' className='border'>
-                        <div className='break-word h-[35px] border-b base-p'>
+                        <div className='break-word min-h-[35px] border-b base-p'>
                             <label className='mr-3 font-bold'>Bussines: </label>
                             <label className='text-sm text-gray-500 dark:text-gray-300'>A.M Invoicing</label>
                         </div>
-                        <div className='break-word h-[35px] border-b base-p'>
+                        <div className='break-word min-h-[35px] border-b base-p'>
                             <label className='mr-3 font-bold'>Email: </label>
                             <label className='text-sm text-gray-500 dark:text-gray-300 '>armandomyftarii@gmail.com</label></div>
-                        <div className='break-word h-[35px] border-b base-p'>
+                        <div className='break-word min-h-[35px] border-b base-p'>
                             <label className='mr-3 font-bold'>Phone Number: </label>
                             <label className='text-sm text-gray-500 dark:text-gray-300'>+355 69 487 0009</label></div>
-                        <div className='break-word h-[35px] base-p'>
+                        <div className='break-word min-h-[35px] base-p'>
                             <label className='mr-3 font-bold'>Address: </label>
                             <label className='text-sm text-gray-500 dark:text-gray-300'>Unaza e Re,  Tirane, Albania</label></div>
                     </div>
@@ -149,7 +148,7 @@ const Invoices: React.FC = () => {
                 <div>
                     <h2 className='base-mb font-bold text-lg'>Bill to</h2>
                     <div id='billTo' className='border'>
-                        <div className='break-word h-[35px] border-b base-p flex items-center'>
+                        <div className='break-word min-h-[35px] border-b base-p flex items-center'>
                             <label className='mr-3 font-bold'>Customer: </label>
                             <Popover open={openCustomersList} onOpenChange={setOpenCustomersList}>
                                 <PopoverTrigger className='w-[auto]' asChild>
@@ -174,9 +173,9 @@ const Invoices: React.FC = () => {
                                                     <CommandItem
                                                         key={customer.id}
                                                         value={customer.id}
-                                                        onSelect={(currentValue) => {
-                                                            const val = (+currentValue === selectedCustomer?.id) ? null
-                                                                : customers.find(cust => cust.id === +currentValue);
+                                                        onSelect={() => {
+                                                            const val = (customer.id === selectedCustomer?.id) ? null
+                                                                : customers.find(cust => cust.id === customer.id);
                                                             setSelectedCustomer(val ?? null);
                                                             setOpenCustomersList(false)
                                                         }}
@@ -194,74 +193,70 @@ const Invoices: React.FC = () => {
                                 </PopoverContent>
                             </Popover>
                         </div>
-                        <div className='break-word h-[35px] border-b  base-p'>
+                        <div className='break-word min-h-[35px] border-b  base-p'>
                             <label className='mr-3 font-bold'>Email: </label>
                             <label className='text-sm text-gray-500 dark:text-gray-300 '>{selectedCustomer?.email}</label></div>
-                        <div className='break-word h-[35px] border-b base-p'>
+                        <div className='break-word min-h-[35px] border-b base-p'>
                             <label className='mr-3 font-bold'>Phone Number: </label>
                             <label className='text-sm text-gray-500 dark:text-gray-300'>{selectedCustomer?.phone}</label></div>
-                        <div className='break-word h-[35px] base-p'>
+                        <div className='break-word min-h-[35px] base-p'>
                             <label className='mr-3 font-bold'>Address: </label>
                             <label className='text-sm text-gray-500 dark:text-gray-300'>{selectedCustomer?.address}</label></div>
                     </div>
                 </div>
             </div >
+
             <div id='invoiceEntries' className=' mt-10 p-[.5rem]'>
-                <div className='flex items-center justify-center text-lg opacity-50'>
-                    Invoice Items
-                </div>
-                <Table >
-                    <TableCaption className='mt-10'>
-                        <Popover open={openItemsList} onOpenChange={setOpenItemsList}>
-                            <PopoverTrigger className='w-[auto]' asChild>
-                                <Button className='flex items-center gap-[.25rem] float-left focus:outline-none' aria-expanded={openItemsList} size='sm'>New Item
-                                    <FaPlus ></FaPlus></Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[auto] p-0">
-                                <ScrollArea className='h-[200px] sm:h-[350px] rounded-md border'>
-                                    <Command className=' '>
-                                        <CommandInput placeholder="Search items..." />
-                                        <CommandEmpty>No item found.</CommandEmpty>
-                                        <CommandGroup>
-                                            {allItems.map((item) => (
-                                                <CommandItem
-                                                    key={item.id}
-                                                    value={item.id}
-                                                    onSelect={(current) => {
-                                                        setOpenItemsList(false);
-                                                        const itemExists = itemsList.findIndex(el => el.itemId === +current);
-                                                        if (itemExists !== -1) {
-                                                            const currentItems = [...itemsList];
-                                                            currentItems[itemExists].quantity += 1;
-                                                            setItemsList(currentItems);
-                                                            return;
-                                                        }
-                                                        const val = allItems.find(el => el.id === +current);
-                                                        if (val) {
-                                                            setItemsList(prevItems => [...prevItems, {
-                                                                itemId: val.id,
-                                                                itemName: val.name,
-                                                                itemCode: val.code,
-                                                                vatRate: val.vatRate,
-                                                                quantity: val.quantity ?? 1,
-                                                                uom: val.uom,
-                                                                unitPrice: val.price,
-                                                                discountPercent: 0,
-                                                                notes: ''
-                                                            }]);
-                                                        }
-                                                    }}
-                                                    className='p-3'
-                                                >
-                                                    {item.name}
-                                                </CommandItem>
-                                            ))}
-                                        </CommandGroup>
-                                    </Command>
-                                </ScrollArea>
-                            </PopoverContent>
-                        </Popover>
-                    </TableCaption>
+                <Popover open={openItemsList} onOpenChange={setOpenItemsList}>
+                    <PopoverTrigger className='w-[auto]' asChild>
+                        <Button className='flex items-center gap-[.25rem] float-left focus:outline-none' aria-expanded={openItemsList} size='sm'>New Item
+                            <FaPlus ></FaPlus></Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[auto] p-0">
+                        <ScrollArea className='h-[200px] sm:h-[350px] rounded-md border'>
+                            <Command className=' '>
+                                <CommandInput placeholder="Search items..." />
+                                <CommandEmpty>No item found.</CommandEmpty>
+                                <CommandGroup>
+                                    {allItems.map((item) => (
+                                        <CommandItem
+                                            key={item.id}
+                                            value={item.id}
+                                            onSelect={() => {
+                                                setOpenItemsList(false);
+                                                const itemExists = itemsList.findIndex(el => el.itemId === item.id);
+                                                if (itemExists !== -1) {
+                                                    const currentItems = [...itemsList];
+                                                    currentItems[itemExists].quantity += 1;
+                                                    setItemsList(currentItems);
+                                                    return;
+                                                }
+                                                const val = allItems.find(el => el.id === item.id);
+                                                if (val) {
+                                                    setItemsList(prevItems => [...prevItems, {
+                                                        itemId: val.id,
+                                                        itemName: val.name,
+                                                        itemCode: val.code,
+                                                        vatRate: val.vatRate,
+                                                        quantity: val.quantity ?? 1,
+                                                        uom: val.uom,
+                                                        unitPrice: val.price,
+                                                        discountPercent: 0,
+                                                        notes: ''
+                                                    }]);
+                                                }
+                                            }}
+                                            className='p-3'
+                                        >
+                                            {item.name}
+                                        </CommandItem>
+                                    ))}
+                                </CommandGroup>
+                            </Command>
+                        </ScrollArea>
+                    </PopoverContent>
+                </Popover>
+                <Table className='mb-3'>
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[100px]">Code</TableHead>
@@ -301,6 +296,7 @@ const Invoices: React.FC = () => {
                         ))}
                     </TableBody>
                 </Table>
+                {itemsList.length === 0 && <div className='flex justify-center'>No items selected</div>}
                 <div id='totalInfo' className='w-full flex items-center justify-between border-none mt-10'>
                     <div className="grid gap-[.5rem] w-2/3">
                         <Label htmlFor="notes">Notes</Label>
