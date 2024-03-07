@@ -89,5 +89,5 @@ export type InvoiceDTO = {
     isPaid: boolean;
     notes?: string | null;
     user?: string | null;
-    invoiceLines?: InvoiceLine[];
+    invoiceLines: InvoiceLine[];
 }
