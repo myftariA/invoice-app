@@ -41,8 +41,8 @@ const Invoices: React.FC = () => {
                 axios.get<Customer[]>('/api/Customers'),
                 axios.get<Item[]>('/api/Items'),
             ]);
-            setCustomers(customers.data as Customer[]);
-            setAllItems(items.data as Item[]);
+            setCustomers(customers.data);
+            setAllItems(items.data);
         } catch (error: any) {
             toast.error('Error fetching data', {
                 description: error?.message,
@@ -173,11 +173,10 @@ const Invoices: React.FC = () => {
                                                 {customers.map((customer) => (
                                                     <CommandItem
                                                         key={customer.id}
-                                                        value={customer.id.toString()}
+                                                        value={customer.id}
                                                         onSelect={(currentValue) => {
                                                             const val = (+currentValue === selectedCustomer?.id) ? null
                                                                 : customers.find(cust => cust.id === +currentValue);
-                                                            console.log(val);
                                                             setSelectedCustomer(val ?? null);
                                                             setOpenCustomersList(false)
                                                         }}
@@ -227,7 +226,7 @@ const Invoices: React.FC = () => {
                                             {allItems.map((item) => (
                                                 <CommandItem
                                                     key={item.id}
-                                                    value={item.id.toString()}
+                                                    value={item.id}
                                                     onSelect={(current) => {
                                                         setOpenItemsList(false);
                                                         const itemExists = itemsList.findIndex(el => el.itemId === +current);
@@ -290,9 +289,8 @@ const Invoices: React.FC = () => {
                                 <TableCell className="text-right">{item.vatRate > 0 ? ((item.quantity * item.unitPrice) * item.vatRate).toFixed(2) : ''}</TableCell>
                                 <TableCell className="text-right">{((item.quantity * item.unitPrice) + ((item.quantity * item.unitPrice) * item.vatRate)).toFixed(2)}</TableCell>
                                 <TableCell className='size-1'>
-                                    <XIcon className='size-1 cursor-pointer' onClick={(...args) => {
+                                    <XIcon className='size-1 cursor-pointer' onClick={() => {
                                         if (item.itemId) {
-                                            console.log(args);
                                             const items = [...itemsList];
                                             items.splice(index, 1);
                                             setItemsList(items);
