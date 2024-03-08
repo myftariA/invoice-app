@@ -28,6 +28,7 @@ table, instead of adding a new row, it will update the quantity of the existing 
 5. Click Generate button to generate the invoice.
 
 --- Customers Page ---
+
 First this page presents you with a list of existing customers. You can:
 1. Create a new customer. Click the 'Add Customer' button and you will be presented with a dialog to fill the customer form.
 2. Edit a customer when clicking the Pencil Icon on the respective customer row. You will be presented with the same dialog where 
@@ -35,6 +36,7 @@ the form fields will be autofilled with the current row data.
 3. Delete a customer when clicking the Trash Icon on the respective row. You will be presented with an alert box to confirm you action.
 
 --- Items Page ---
+
 First this page presents you with a list of existing items. You can:
 1. Create a new item. Click the 'Add Item' button and you will be presented with a dialog to fill the item form.
 2. Edit a item when clicking the Pencil Icon on the respective item row. You will be presented with the same dialog where 
