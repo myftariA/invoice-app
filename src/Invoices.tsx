@@ -187,7 +187,7 @@ const Invoices: React.FC = () => {
                                         size='base'
                                         role="combobox"
                                         aria-expanded={openCustomersList}
-                                        className="justify-between bg-slate-100 overflow-clip text-gray-500 dark:text-white"
+                                        className="justify-between bg-slate-100 overflow-clip text-gray-500 dark:text-white h-[25px]"
                                     >
                                         {selectedCustomer?.name || "Select customer ... "}
                                         <ChevronsUpDown className="ml-[.5rem] h-4 w-4 shrink-0 opacity-50" />
