@@ -31,26 +31,10 @@ import { Customer, Item, InvoiceLine, InvoiceDTO } from './Types';
 import { toast } from 'sonner';
 import { Input } from './components/ui/input';
 import { useUserContext } from './UserContext';
+import { CustomerDialog } from './CustomerDialog';
 
 const Invoices: React.FC = () => {
     const { user } = useUserContext();
-    const getComboboxData = async () => {
-        try {
-            const [customers, items] = await Promise.all([
-                axios.get<Customer[]>('/api/Customers'),
-                axios.get<Item[]>('/api/Items'),
-            ]);
-            setCustomers(customers.data);
-            setAllItems(items.data);
-        } catch (error: any) {
-            toast.error('Error fetching data', {
-                description: error?.message,
-                cancel: {
-                    label: 'Close'
-                }
-            });
-        }
-    };
 
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [openCustomersList, setOpenCustomersList] = useState(false);
@@ -64,13 +48,43 @@ const Invoices: React.FC = () => {
     const subtotalRef = useRef<HTMLLabelElement>(null);
     const vatRef = useRef<HTMLLabelElement>(null);
     const totalRef = useRef<HTMLLabelElement>(null);
+    const discountRef = useRef<HTMLLabelElement>(null);
     const notesRef = useRef<HTMLTextAreaElement>(null);
 
-    useEffect(() => { getComboboxData() }, []);
+    useEffect(() => {
+        const controller = new AbortController();
+        try {
+            Promise.all([
+                axios.get<Customer[]>('/api/Customers', {
+                    signal: controller.signal
+                }),
+                axios.get<Item[]>('/api/Items', {
+                    signal: controller.signal
+                }),
+            ]).then(([customers, items]) => {
+                setCustomers(customers.data);
+                setAllItems(items.data);
+            })
+        } catch (error: any) {
+            toast.error('Error fetching data', {
+                description: error?.message,
+                cancel: {
+                    label: 'Close'
+                }
+            });
+        }
+        return () => controller.abort();
+    }, []);
 
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>, itemId: number) => {
         const newItems = itemsList.map((item) =>
             item.itemId === itemId ? { ...item, quantity: parseInt(e.target.value, 10) || 0 } : item
+        );
+        setItemsList(newItems);
+    };
+    const calulcateDiscount = (e: React.ChangeEvent<HTMLInputElement>, itemId: number) => {
+        const newItems = itemsList.map((item) =>
+            item.itemId === itemId ? { ...item, discountPercent: parseInt(e.target.value, 10) || 0 } : item
         );
         setItemsList(newItems);
     };
@@ -90,27 +104,43 @@ const Invoices: React.FC = () => {
                 label: 'Close'
             }
         });
+        const invoiceLines = [...itemsList].map(item => ({ ...item, discountPercent: item.discountPercent / 100 }));
         const invoiceDto: InvoiceDTO = {
             invoiceDate: new Date().toISOString(),
             invoiceNumber: `ARM-${invoiceNrRef.current.value}`,
             customerId: selectedCustomer.id,
             totalAmount: totalRef.current?.textContent ? +totalRef.current?.textContent : 0,
             totalVatAmount: vatRef.current?.textContent ? +vatRef.current?.textContent : 0,
-            totalDiscountAmount: 0,
+            totalDiscountAmount: discountRef.current?.textContent ? + discountRef.current?.textContent : 0,
             isPaid: false,
             notes: notesRef.current?.value,
             user: user?.username,
-            invoiceLines: itemsList,
+            invoiceLines: invoiceLines,
         }
 
         toast.promise(axios.post<InvoiceDTO>('/api/Invoices', invoiceDto), {
             loading: 'Generating invoice..',
             success: () => {
+                setSelectedCustomer(null);
+                setItemsList([]);
+                if (invoiceNrRef.current)
+                    invoiceNrRef.current.value = '';
+                if (notesRef.current)
+                    notesRef.current.value = '';
+
                 return 'Invoice generated successfully!'
             },
-            error: 'An error occurred generating the invoice!'
+            error: (err) => {
+                return err.response?.statusText;
+            }
         });
+    }
 
+    const [customerDialog, setCustomerDialog] = useState(false);
+    function autocompleteCreatedCustomer(newCustomer: Customer) {
+        setSelectedCustomer(newCustomer);
+        setCustomerDialog(false);
+        setOpenCustomersList(false);
     }
     return (
         <div className="flex flex-col w-full">
@@ -163,10 +193,18 @@ const Invoices: React.FC = () => {
                                         <ChevronsUpDown className="ml-[.5rem] h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-[auto] p-0">
+                                <PopoverContent className="w-[auto] p-0" >
                                     <ScrollArea className='h-[200px] sm:h-[350px] rounded-md border'>
-                                        <Command className=' '>
-                                            <CommandInput placeholder="Search customer..." />
+                                        <Command >
+                                            <Button size={'lg'} variant={'default'} onClick={() => setCustomerDialog(true)}>Create customer</Button>
+                                            <CustomerDialog
+                                                openDialog={customerDialog}
+                                                onCloseDialog={() => setCustomerDialog(false)}
+                                                customerData={null}
+                                                customerSaved={autocompleteCreatedCustomer}
+                                            ></CustomerDialog>
+                                            <CommandInput placeholder="Search customer..." >
+                                            </CommandInput>
                                             <CommandEmpty>No customer found.</CommandEmpty>
                                             <CommandGroup>
                                                 {customers.map((customer) => (
@@ -209,7 +247,7 @@ const Invoices: React.FC = () => {
             <div id='invoiceEntries' className=' mt-10 p-[.5rem]'>
                 <Popover open={openItemsList} onOpenChange={setOpenItemsList}>
                     <PopoverTrigger className='w-[auto]' asChild>
-                        <Button className='flex items-center gap-[.25rem] float-left focus:outline-none' aria-expanded={openItemsList} size='sm'>New Item
+                        <Button className='flex items-center gap-[.25rem] float-left focus:outline-none mb-[.25rem]' aria-expanded={openItemsList} size='sm'>New Item
                             <FaPlus ></FaPlus></Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[auto] p-0">
@@ -263,6 +301,7 @@ const Invoices: React.FC = () => {
                             <TableHead>Name</TableHead>
                             <TableHead>Quantity</TableHead>
                             <TableHead className="text-left">Unit Price</TableHead>
+                            <TableHead className="text-left">Discount %</TableHead>
                             <TableHead className="text-left">Total</TableHead>
                             <TableHead className="text-right">Vat</TableHead>
                             <TableHead className="text-right">Total With Vat</TableHead>
@@ -280,9 +319,15 @@ const Invoices: React.FC = () => {
                                         }}></Input>
                                 </TableCell>
                                 <TableCell className="text-left">{item.unitPrice}</TableCell>
-                                <TableCell>{(item.quantity * item.unitPrice).toFixed(2)}</TableCell>
-                                <TableCell className="text-right">{item.vatRate > 0 ? ((item.quantity * item.unitPrice) * item.vatRate).toFixed(2) : ''}</TableCell>
-                                <TableCell className="text-right">{((item.quantity * item.unitPrice) + ((item.quantity * item.unitPrice) * item.vatRate)).toFixed(2)}</TableCell>
+                                <TableCell className="text-left">
+                                    <Input className='w-[50px] p-0 h-[30px] border-0 text-center focus:outline-none dark:bg-transparent' type='number'
+                                        max={100}
+                                        value={item.discountPercent} min={0} step={1} onChange={(e) => {
+                                            calulcateDiscount(e, item.itemId)
+                                        }}></Input></TableCell>
+                                <TableCell>{(item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))).toFixed(2)}</TableCell>
+                                <TableCell className="text-right">{item.vatRate > 0 ? ((item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))) * item.vatRate).toFixed(2) : ''}</TableCell>
+                                <TableCell className="text-right">{((item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))) + ((item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))) * item.vatRate)).toFixed(2)}</TableCell>
                                 <TableCell className='size-1'>
                                     <XIcon className='size-1 cursor-pointer' onClick={() => {
                                         if (item.itemId) {
@@ -294,7 +339,7 @@ const Invoices: React.FC = () => {
                                 </TableCell>
                             </TableRow>
                         )) : (<TableRow>
-                            <TableCell colSpan={7} className='text-center'>
+                            <TableCell colSpan={8} className='text-center'>
                                 No items selected
                             </TableCell>
                         </TableRow>)}
@@ -308,15 +353,22 @@ const Invoices: React.FC = () => {
                     <div className='rounded-md mt-3 dark:bg-slate-800/50 border-2 dark:border-none'>
                         <div className='flex justify-between items-center'>
                             <Label className=' px-3 py-[.75rem]'>SubTotal</Label>
-                            <Label className="text-right px-3 py-[.75rem]" ref={subtotalRef}>{(itemsList.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0)).toFixed(2)}</Label>
+                            <Label className="text-right px-3 py-[.75rem]" ref={subtotalRef}>{(itemsList.reduce((acc, item) => acc + (item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))), 0)).toFixed(2)}</Label>
                         </div>
                         <div className='flex justify-between items-center'>
                             <Label className=' px-3 py-[.75rem]' >Vat</Label>
-                            <Label className=" px-3 py-[.75rem] text-right" ref={vatRef}>{(itemsList.reduce((acc, item) => acc + ((item.quantity * item.unitPrice) * item.vatRate), 0)).toFixed(2)}</Label>
+                            <Label className=" px-3 py-[.75rem] text-right" ref={vatRef}>{(itemsList.reduce((acc, item) => acc + ((item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))) * item.vatRate), 0)).toFixed(2)}</Label>
                         </div>
                         <div className='flex justify-between items-center'>
                             <Label className=' px-3 py-[.75rem]'>Total</Label>
-                            <Label className="text-right  px-3 py-[.75rem]" ref={totalRef}>{(itemsList.reduce((acc, item) => acc + ((item.quantity * item.unitPrice) + ((item.quantity * item.unitPrice) * item.vatRate)), 0)).toFixed(2)}</Label>
+                            <Label className="text-right  px-3 py-[.75rem]" ref={totalRef}>{(itemsList.reduce((acc, item) => acc + ((item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))) + ((item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))) * item.vatRate)), 0)).toFixed(2)}</Label>
+                        </div>
+                        <div className='flex justify-between items-center'>
+                            <Label className=' px-3 py-[.75rem]'>Discount</Label>
+                            <Label className="text-right  px-3 py-[.75rem]" ref={discountRef}>{
+                                ((itemsList.reduce((acc, item) => acc + ((item.quantity * item.unitPrice) + ((item.quantity * item.unitPrice) * item.vatRate)), 0)) -
+                                    (itemsList.reduce((acc, item) => acc + ((item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))) + ((item.quantity * (item.unitPrice - (item.unitPrice * (item.discountPercent / 100)))) * item.vatRate)), 0))).toFixed(2)
+                            }</Label>
                         </div>
                     </div>
                 </div>
