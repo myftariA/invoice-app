@@ -1,5 +1,5 @@
 
-import Items from './Items';
+import { Items } from './Items';
 import Sidebar from './Sidebar';
 import { Customers } from './Customers';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';

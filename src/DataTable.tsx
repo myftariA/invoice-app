@@ -77,12 +77,14 @@ const DataTable = ({ headers, columns, endpoint, editRecord }: TableProps) => {
                                             <AlertDialogAction onClick={() => {
                                                 toast.promise(axios.delete(`/api/${endpoint}/${col.id}`), {
                                                     loading: 'Deleting in progress..',
-                                                    success: () => {
+                                                    success: (resp) => {
+                                                        if (resp.status !== 201) throw Error('Cannot process the request!');
+
                                                         columns.splice(tableData.findIndex(el => el.id === col.id));
                                                         setTableData(columns);
                                                         return 'Record deleted!'
                                                     },
-                                                    error: (err) => { return err.response.statusText }
+                                                    error: (err) => { return err.response?.statusText ?? err.message }
                                                 });
                                             }} >Delete</AlertDialogAction>
                                         </AlertDialogFooter>

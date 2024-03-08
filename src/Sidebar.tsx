@@ -13,15 +13,15 @@ const Sidebar: React.FC = () => {
                     <TbFileInvoice className="text-lg" />
                     <li className='hidden text-[17px] sm:block'>Invoice</li>
                 </NavLink>
+                <NavLink to='/customers'
+                    className={({ isActive }) => isActive ? 'sidebar-list dark:text-white dark:hover:text-blue-400 dark:bg-slate-500 bg-white rounded-sm' : 'sidebar-list dark:text-white dark:hover:text-blue-400 rounded-sm'} >
+                    <FaUser className="text-[16px]" />
+                    <li className='hidden text-[17px] sm:block'>Customers</li>
+                </NavLink>
                 <NavLink to='/items'
                     className={({ isActive }) => isActive ? 'sidebar-list dark:text-white dark:hover:text-blue-400 dark:bg-slate-500 bg-white rounded-sm' : 'sidebar-list dark:text-white dark:hover:text-blue-400 rounded-sm'} >
                     <RiShoppingBasketLine className="text-lg" />
                     <li className='hidden text-[17px] sm:block'>Items</li>
-                </NavLink>
-                <NavLink to='/customers'
-                    className={({ isActive }) => isActive ? 'sidebar-list dark:text-white dark:hover:text-blue-400 dark:bg-slate-500 bg-white rounded-sm' : 'sidebar-list dark:text-white dark:hover:text-blue-400 rounded-sm'} >
-                    <FaUser className="text-lg" />
-                    <li className='hidden text-[17px] sm:block'>Customers</li>
                 </NavLink>
             </ul>
         </div >

@@ -5,15 +5,19 @@ export interface CustomerTable {
     phone: string;
     address: string;
     city: string;
+    postalCode: string;
+    country: string
 }
 
 export interface ItemTable {
-    id: number;
+    id: number | null;
     name: string;
     code: string;
     price: number;
+    itemType: number;
     vatRate: number;
-    description: string
+    description: string,
+    uom: string
 }
 
 export type Customer = {
@@ -121,11 +125,11 @@ export type CustomerDTO = {
 }
 export type ItemDTO = {
     id?: number | null;
-    name: string;
-    code: string;
-    price: number;
-    address: string;
-    city: string;
-    postalCode: string;
-    country: string;
+    name: string,
+    code: string,
+    price: number,
+    itemType: number,
+    vatRate: number,
+    description: string,
+    uom: string
 }
