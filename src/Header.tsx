@@ -1,9 +1,12 @@
 import { LogOutIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { useUserContext } from './UserContext';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+    currentPage: string
+}
+const Header = ({ currentPage }: HeaderProps) => {
     const { user, logout } = useUserContext();
     const [darkMode, setDarkMode] = useState(false);
 
@@ -14,7 +17,7 @@ const Header: React.FC = () => {
 
     return (
         <div className="h-16 border-b w-full flex items-center justify-between bg-purple-700 dark:bg-gray-950 text-white dark:text-white p-4">
-            <h1 className="text-lg font-bold cursor-default"> A.M Invoicing</h1>
+            <h1 className="text-lg font-bold cursor-default"> {currentPage ? currentPage : 'A.M Invoicing'}</h1>
             <div className='flex items-center gap-0.5 mr-1'>
                 <button
                     onClick={toggleDarkMode}

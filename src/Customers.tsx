@@ -48,7 +48,7 @@ const Customers: React.FC = () => {
     }
     return (
         <>
-            <Button size={'sm'} className='float-right' onClick={() => {
+            <Button size={'sm'} className='float-right mb-4' onClick={() => {
                 setEditCustomerData(null);
                 setOpenDialog(true);
             }}>Add Customer</Button>

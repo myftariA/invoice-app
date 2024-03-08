@@ -127,7 +127,7 @@ const Items: React.FC = () => {
                 setOpenDialog(open);
             }}>
                 <DialogTrigger asChild >
-                    <Button size={'sm'} className='float-right' onClick={() => {
+                    <Button size={'sm'} className='float-right mb-4' onClick={() => {
                         setEditItemData(null);
                         setOpenDialog(true);
                     }} >Add Item</Button>
