@@ -49,16 +49,10 @@ const Items: React.FC = () => {
 
     const getItemsList = async () => {
         try {
-            toast.promise(axios.get<Item[]>('/api/Items'), {
-                loading: 'Loading items..',
-                success: (itemData) => {
-                    const data = itemData.data.map(({ id, name, code, price, itemType, vatRate, description, uom }) => ({ id, name, code, price, itemType, vatRate, description, uom } as ItemTable));
-                    setItemsList(data);
-                    return 'Items list loaded!'
-                },
-                error: 'An error occurred generating the invoice!'
+            axios.get<Item[]>('/api/Items').then(itemData => {
+                const data = itemData.data.map(({ id, name, code, price, itemType, vatRate, description, uom }) => ({ id, name, code, price, itemType, vatRate, description, uom } as ItemTable));
+                setItemsList(data);
             });
-
         } catch (error: any) {
             toast.error('Error fetching items list', {
                 description: error?.message,

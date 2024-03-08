@@ -14,17 +14,11 @@ const Customers: React.FC = () => {
 
     const getCustomersList = async () => {
         try {
-            toast.promise(axios.get<Customer[]>('/api/Customers'), {
-                loading: 'Loading customers..',
-                success: (custData) => {
-                    const data = custData.data.map(({ id, name, phone, email, address, city, postalCode, country }) => ({ id, name, phone, email, address, city, postalCode, country }) as CustomerTable);
-                    setCustomersList(data);
-                    setOpenDialog(false);
-                    return 'Customer list loaded!'
-                },
-                error: 'An error occurred generating the invoice!'
+            axios.get<Customer[]>('/api/Customers').then(custData => {
+                const data = custData.data.map(({ id, name, phone, email, address, city, postalCode, country }) => ({ id, name, phone, email, address, city, postalCode, country }) as CustomerTable);
+                setCustomersList(data);
+                setOpenDialog(false);
             });
-
         } catch (error: any) {
             toast.error('Error fetching customers list', {
                 description: error?.message,
