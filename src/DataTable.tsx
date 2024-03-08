@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import axios from "axios";
+import { useState } from "react";
 
 interface Columns {
     id: number;
@@ -34,6 +35,7 @@ interface TableProps {
 }
 
 const DataTable = ({ headers, columns, endpoint, editRecord }: TableProps) => {
+    const [tableData, setTableData] = useState([...columns]);
     return (
         <>
             <Table >
@@ -46,7 +48,7 @@ const DataTable = ({ headers, columns, endpoint, editRecord }: TableProps) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {columns.map((col) => (
+                    {tableData.map((col) => (
                         <TableRow key={col.id} >
                             {Object.keys(col).map((key) => (
                                 key !== 'id' &&
@@ -73,9 +75,11 @@ const DataTable = ({ headers, columns, endpoint, editRecord }: TableProps) => {
                                         <AlertDialogFooter>
                                             <AlertDialogCancel >Cancel</AlertDialogCancel>
                                             <AlertDialogAction onClick={() => {
-                                                toast.promise(axios.delete(`/api/${endpoint}`), {
+                                                toast.promise(axios.delete(`/api/${endpoint}/${col.id}`), {
                                                     loading: 'Deleting in progress..',
                                                     success: () => {
+                                                        columns.splice(tableData.findIndex(el => el.id === col.id));
+                                                        setTableData(columns);
                                                         return 'Record deleted!'
                                                     },
                                                     error: (err) => { return err.response.statusText }

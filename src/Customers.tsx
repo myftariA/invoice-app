@@ -64,8 +64,8 @@ const Customers: React.FC = () => {
 
     const saveCustomer = () => {
         const { name, email, phone, address, city, postalCode, country } = customerForm.getValues();
+        const custID = editCustomerData?.id;
         const customerObject: CustomerDTO = {
-            id: editCustomerData?.id,
             name,
             email,
             phone,
@@ -74,12 +74,12 @@ const Customers: React.FC = () => {
             postalCode,
             country
         };
-        const method = editCustomerData?.id ? 'put' : 'post';
 
-        toast.promise(axios[method]<CustomerDTO>('/api/Customers', customerObject), {
+        toast.promise(axios[custID ? 'put' : 'post']<CustomerDTO>(`/api/Customers${custID ? `/${custID}` : ''}`, customerObject), {
             loading: 'Posting customer data..',
             success: () => {
                 setOpenDialog(false);
+                getCustomersList();
                 return 'Customer data saved successfully!'
             },
             error: 'An error occurred while saving the customer!'
@@ -120,7 +120,6 @@ const Customers: React.FC = () => {
                                                     placeholder='Name'
                                                     type='text'
                                                     {...field}
-                                                    value={editCustomerData?.name}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -135,8 +134,7 @@ const Customers: React.FC = () => {
                                     return <FormItem className='space-y-[.5rem]'>
                                         <FormLabel>Email</FormLabel>
                                         <FormControl>
-                                            <Input placeholder='Email' type='email' {...field}
-                                                value={editCustomerData?.email}></Input>
+                                            <Input placeholder='Email' type='email' {...field}></Input>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -149,8 +147,7 @@ const Customers: React.FC = () => {
                                     return <FormItem className='space-y-[.5rem]'>
                                         <FormLabel>Phone</FormLabel>
                                         <FormControl>
-                                            <Input placeholder='Phone' type='tel' {...field}
-                                                value={editCustomerData?.phone}></Input>
+                                            <Input placeholder='Phone' type='tel' {...field}></Input>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -163,8 +160,7 @@ const Customers: React.FC = () => {
                                     return <FormItem className='space-y-[.5rem]'>
                                         <FormLabel>Address</FormLabel>
                                         <FormControl>
-                                            <Input placeholder='Address' type='text' {...field}
-                                                value={editCustomerData?.address}></Input>
+                                            <Input placeholder='Address' type='text' {...field}></Input>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -177,8 +173,7 @@ const Customers: React.FC = () => {
                                     return <FormItem className='space-y-[.5rem] '>
                                         <FormLabel>City</FormLabel>
                                         <FormControl>
-                                            <Input placeholder='City' type='text' {...field}
-                                                value={editCustomerData?.city}></Input>
+                                            <Input placeholder='City' type='text' {...field}></Input>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -191,8 +186,7 @@ const Customers: React.FC = () => {
                                     return <FormItem className='space-y-[.5rem]'>
                                         <FormLabel>Postal Code</FormLabel>
                                         <FormControl>
-                                            <Input placeholder='Postal Code' type='text' {...field}
-                                                value={editCustomerData?.city}></Input>
+                                            <Input placeholder='Postal Code' type='text' {...field}></Input>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -205,8 +199,7 @@ const Customers: React.FC = () => {
                                     return <FormItem className='space-y-[.5rem] mb-10'>
                                         <FormLabel>Country</FormLabel>
                                         <FormControl>
-                                            <Input placeholder='Country' type='text' {...field}
-                                                value={editCustomerData?.city}></Input>
+                                            <Input placeholder='Country' type='text' {...field}></Input>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
