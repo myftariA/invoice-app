@@ -1,3 +1,20 @@
+export interface CustomerTable {
+    id: number | null;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+}
+
+export interface ItemTable {
+    id: number;
+    name: string;
+    code: string;
+    price: number;
+    vatRate: number;
+    description: string
+}
 
 export type Customer = {
     id: number;
@@ -90,4 +107,25 @@ export type InvoiceDTO = {
     notes?: string | null;
     user?: string | null;
     invoiceLines: InvoiceLine[];
+}
+
+export type CustomerDTO = {
+    id?: number | null;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
+}
+export type ItemDTO = {
+    id?: number | null;
+    name: string;
+    code: string;
+    price: number;
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
 }

@@ -34,7 +34,7 @@ import { useUserContext } from './UserContext';
 
 const Invoices: React.FC = () => {
     const { user } = useUserContext();
-    const getAllCustomers = async () => {
+    const getComboboxData = async () => {
         try {
             const [customers, items] = await Promise.all([
                 axios.get<Customer[]>('/api/Customers'),
@@ -66,7 +66,7 @@ const Invoices: React.FC = () => {
     const totalRef = useRef<HTMLLabelElement>(null);
     const notesRef = useRef<HTMLTextAreaElement>(null);
 
-    useEffect(() => { getAllCustomers() }, []);
+    useEffect(() => { getComboboxData() }, []);
 
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>, itemId: number) => {
         const newItems = itemsList.map((item) =>
@@ -106,7 +106,7 @@ const Invoices: React.FC = () => {
         toast.promise(axios.post<InvoiceDTO>('/api/Invoices', invoiceDto), {
             loading: 'Generating invoice..',
             success: () => {
-                return 'Invoice generated successfuly!'
+                return 'Invoice generated successfully!'
             },
             error: 'An error occurred generating the invoice!'
         });

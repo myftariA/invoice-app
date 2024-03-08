@@ -1,7 +1,7 @@
 
 import Items from './Items';
 import Sidebar from './Sidebar';
-import Customers from './Customers';
+import { Customers } from './Customers';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './Header';
 import Invoices from './Invoices';

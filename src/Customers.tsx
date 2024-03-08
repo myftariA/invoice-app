@@ -1,75 +1,228 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { DataTable } from './DataTable';
+import { Button } from './components/ui/button';
+import axios from 'axios';
+import { Customer, CustomerDTO, CustomerTable } from './Types';
+import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './components/ui/form';
+import { Input } from './components/ui/input';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+
+const customerSchema = z.object({
+    name: z.string().min(2),
+    email: z.string().email(),
+    phone: z.string().min(8),
+    address: z.string().min(5),
+    city: z.string().min(3),
+    postalCode: z.string().min(3),
+    country: z.string().min(3)
+});
 
 const Customers: React.FC = () => {
-    return (<>Welcome to Customers page</>)
-    // interface customerField {
-    //     id: string,
-    //     label: string,
-    //     type: string,
-    //     value: string,
-    //     schema: any
-    // }
-    // const customerFields: customerField[] = [
-    //     {
-    //         id: "name",
-    //         label: "Name",
-    //         type: 'text',
-    //         value: '',
-    //         schema: z.string().min(2, 'Ju lutem vendosni nje emer te sakte')
-    //     },
-    //     {
-    //         id: "phone",
-    //         label: "Phone",
-    //         type: 'tel',
-    //         value: '',
-    //         schema: z.string().min(8, 'Ju lutem kontrolloni numrin e telefonit')
-    //     },
-    //     {
-    //         id: "email",
-    //         label: "Email",
-    //         type: 'email',
-    //         value: '',
-    //         schema: z.string().email('Ju lutem kontrolloni email'),
-    //     },
-    //     {
-    //         id: "address",
-    //         label: "Address",
-    //         type: 'address',
-    //         value: '',
-    //         schema: z.string().min(10, 'Vendosni adresen e sakte')
-    //     }
-    // ]
-    // function updateCustomerValues(event: React.ChangeEvent<HTMLInputElement>, customer: customerField[], ind: number) {
-    //     try {
-    //         customer[ind].schema.parse(event.target.value);
-    //         console.log('valid schema');
-    //     } catch (err: any) {
-    //         console.log(err.message);
-    //     }
-    //     customer[ind].value = event.target.value;
-    // }
-    // return (
-    //     <div className="flex flex-col w-full">
-    //         <div id='customerInfo' className="grid grid-cols-3 gap-3 w-full">
-    //             {customerFields.map((key, i) => (
-    //                 <div key={key.id} className={i == 3 ? 'col-span-full' : ''}>
-    //                     <label htmlFor={customerFields[i].id}>{customerFields[i].label}</label>
-    //                     <input
-    //                         required
-    //                         type={customerFields[i].type}
-    //                         key={key.id}
-    //                         placeholder={customerFields[i].label}
-    //                         className='input w-full'
-    //                         onBlur={(evt) => updateCustomerValues(evt, customerFields, i)}
-    //                     />
-    //                 </div>
-    //             ))}
-    //         </div>
-    //         <div id='invoiceEntries'></div>
-    //         <div id='totalInfo'></div>
-    //     </div>
-    // )
+    const [editCustomerData, setEditCustomerData] = useState<CustomerTable | null>(null);
+    const [customersList, setCustomersList] = useState<CustomerTable[]>([]);
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const customerForm = useForm<z.infer<typeof customerSchema>>({
+        resolver: zodResolver(customerSchema),
+        defaultValues: {
+        }
+    });
+
+    const getCustomersList = async () => {
+        try {
+            toast.promise(axios.get<Customer[]>('/api/Customers'), {
+                loading: 'Loading customers..',
+                success: (custData) => {
+                    const data = custData.data.map(({ id, name, phone, email, address, city }) => ({ id, name, phone, email, address, city }) as CustomerTable);
+                    setCustomersList(data);
+                    return 'Customer list loaded!'
+                },
+                error: 'An error occurred generating the invoice!'
+            });
+
+        } catch (error: any) {
+            toast.error('Error fetching customers list', {
+                description: error?.message,
+                cancel: {
+                    label: 'Close'
+                }
+            });
+        }
+    };
+    useEffect(() => { getCustomersList() }, []);
+
+    const saveCustomer = () => {
+        const { name, email, phone, address, city, postalCode, country } = customerForm.getValues();
+        const customerObject: CustomerDTO = {
+            id: editCustomerData?.id,
+            name,
+            email,
+            phone,
+            address,
+            city,
+            postalCode,
+            country
+        };
+        const method = editCustomerData?.id ? 'put' : 'post';
+
+        toast.promise(axios[method]<CustomerDTO>('/api/Customers', customerObject), {
+            loading: 'Posting customer data..',
+            success: () => {
+                setOpenDialog(false);
+                return 'Customer data saved successfully!'
+            },
+            error: 'An error occurred while saving the customer!'
+        });
+    }
+    const editCustomer = (customerData: CustomerTable) => {
+        setEditCustomerData(customerData);
+        setOpenDialog(true);
+    }
+
+    return (
+        <>
+            <Dialog open={openDialog} onOpenChange={(open) => {
+                customerForm.clearErrors();
+                setOpenDialog(open);
+            }}>
+                <DialogTrigger asChild >
+                    <Button size={'sm'} className='float-right' onClick={() => {
+                        setEditCustomerData(null);
+                        setOpenDialog(true);
+                    }} >Add Customer</Button>
+                </DialogTrigger>
+                <DialogContent >
+                    <DialogHeader>
+                        <DialogTitle>{editCustomerData ? 'Editing cutomer: ' + editCustomerData.name : 'Add Customer'}</DialogTitle>
+                    </DialogHeader>
+                    <Form {...customerForm}>
+                        <form className="grid grid-cols-3 gap-1 mt-4" onSubmit={customerForm.handleSubmit(saveCustomer)}>
+                            <FormField
+                                control={customerForm.control}
+                                name='name'
+                                render={({ field }) => {
+                                    return (
+                                        <FormItem className='space-y-[.5rem]'>
+                                            <FormLabel>Name</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder='Name'
+                                                    type='text'
+                                                    {...field}
+                                                    value={editCustomerData?.name}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    );
+                                }}
+                            ></FormField>
+                            <FormField
+                                control={customerForm.control}
+                                name='email'
+                                render={({ field }) => {
+                                    return <FormItem className='space-y-[.5rem]'>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='Email' type='email' {...field}
+                                                value={editCustomerData?.email}></Input>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                }}
+                            ></FormField>
+                            <FormField
+                                control={customerForm.control}
+                                name='phone'
+                                render={({ field }) => {
+                                    return <FormItem className='space-y-[.5rem]'>
+                                        <FormLabel>Phone</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='Phone' type='tel' {...field}
+                                                value={editCustomerData?.phone}></Input>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                }}
+                            ></FormField>
+                            <FormField
+                                control={customerForm.control}
+                                name='address'
+                                render={({ field }) => {
+                                    return <FormItem className='space-y-[.5rem]'>
+                                        <FormLabel>Address</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='Address' type='text' {...field}
+                                                value={editCustomerData?.address}></Input>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                }}
+                            ></FormField>
+                            <FormField
+                                control={customerForm.control}
+                                name='city'
+                                render={({ field }) => {
+                                    return <FormItem className='space-y-[.5rem] '>
+                                        <FormLabel>City</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='City' type='text' {...field}
+                                                value={editCustomerData?.city}></Input>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                }}
+                            ></FormField>
+                            <FormField
+                                control={customerForm.control}
+                                name='postalCode'
+                                render={({ field }) => {
+                                    return <FormItem className='space-y-[.5rem]'>
+                                        <FormLabel>Postal Code</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='Postal Code' type='text' {...field}
+                                                value={editCustomerData?.city}></Input>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                }}
+                            ></FormField>
+                            <FormField
+                                control={customerForm.control}
+                                name='country'
+                                render={({ field }) => {
+                                    return <FormItem className='space-y-[.5rem] mb-10'>
+                                        <FormLabel>Country</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='Country' type='text' {...field}
+                                                value={editCustomerData?.city}></Input>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                }}
+                            ></FormField>
+                            <DialogFooter className='absolute bottom-0 right-0 p-3'>
+                                <Button type="submit" size={'lg'}>Save</Button>
+                            </DialogFooter>
+                        </form>
+                    </Form>
+                </DialogContent>
+            </Dialog >
+            {customersList.length > 0 && <DataTable headers={['Name', 'Email', 'Phone', 'Address', 'City']} columns={customersList as any} endpoint='Customers' editRecord={editCustomer}></DataTable>}
+        </>
+    )
 }
 
-export default Customers;
+export { Customers };
+
