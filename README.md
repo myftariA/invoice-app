@@ -15,6 +15,12 @@ of the action you will take. Also on the top left the logo becomes the page titl
 
 
 # App Pages Guide
+--- Login Page ---
+
+Usename: armando
+Password: armando
+
+
 --- Invoice Page ---
 
 To generate an invoice you have to take this steps: 
